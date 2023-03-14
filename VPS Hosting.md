@@ -1,3 +1,8 @@
+`ssh -i "adzum.pem" ubuntu@13.232.247.215`
+
+`ssh root@64.227.180.96`
+
+
 # After logging in to server
 
 'sudo apt update
