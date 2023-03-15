@@ -212,7 +212,7 @@ sudo ufw allow 'Nginx Full`
 
 # To Update changes in project
 
-sudo systemctl restart gunicorn
+`sudo systemctl restart gunicorn
 sudo systemctl daemon-reload
 sudo systemctl restart gunicorn.socket gunicorn.service
-sudo nginx -t && sudo systemctl restart nginx
+sudo nginx -t && sudo systemctl restart nginx`
