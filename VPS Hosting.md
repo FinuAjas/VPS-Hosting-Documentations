@@ -5,8 +5,8 @@
 
 # After logging in to server
 
-'sudo apt update
-sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contrib nginx curl'
+`sudo apt update
+sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contrib nginx curl`
 
 # Configure Database Postgresql
 
@@ -40,6 +40,7 @@ source venv/bin/activate`
 
 Make sure you have following configuration in database settings of the project
 
+`
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -50,6 +51,7 @@ DATABASES = {
         'PORT': '',
     }
 }
+`
 
 . . .
 
@@ -80,7 +82,7 @@ python manage.py migrate`
 # Configuring gunicorn
 
 
-'gunicorn --bind 0.0.0.0:8000 adzum.wsgi'
+`gunicorn --bind 0.0.0.0:8000 adzum.wsgi`
 
 # Deactive virtualenv 
 
@@ -93,6 +95,7 @@ python manage.py migrate`
 
 . . .
 
+`
 [Unit]
 Description=gunicorn socket
 
@@ -101,6 +104,7 @@ ListenStream=/run/gunicorn.sock
 
 [Install]
 WantedBy=sockets.target
+`
 
 . . .
 
@@ -110,6 +114,7 @@ WantedBy=sockets.target
 # Add this code to gunicorn.service file.
 . . .
 
+`
 [Unit]
 Description=gunicorn daemon
 Requires=gunicorn.socket
@@ -127,6 +132,7 @@ ExecStart=/root/adzum/venv/bin/gunicorn \
 
 [Install]
 WantedBy=multi-user.target
+`
 
 . . .
 
@@ -186,6 +192,7 @@ sudo systemctl restart gunicorn`
 
 . . .
 
+`
 server {
     listen 80;
     server_name 64.227.180.96;
@@ -197,6 +204,7 @@ server {
         proxy_pass http://unix:/run/gunicorn.sock;
     }
 }
+`
 
 . . .
 
