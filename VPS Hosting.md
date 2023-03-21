@@ -29,8 +29,8 @@ cd ~/adzum`
 
 # Create virtual environment and activate
 
-'python3 -m venv venv
-source venv/bin/activate'
+`python3 -m venv venv
+source venv/bin/activate`
 
 # Install dependencies
 
