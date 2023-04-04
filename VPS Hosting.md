@@ -1,36 +1,48 @@
 `ssh -i "adzum.pem" ubuntu@13.232.247.215`
 
+Opsis
+
+`ssh root@143.110.182.98`
+
+7!OpsisEye
+
+Adzum
+
 `ssh root@64.227.180.96`
+
+`7!AdzumG`
+
+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
 
 
 # After logging in to server
 
-`sudo apt update
-sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contrib nginx curl`
+'sudo apt update
+sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contrib nginx curl'
 
 # Configure Database Postgresql
 
 `sudo -u postgres psql`
-`CREATE DATABASE adzum;
-CREATE USER adzum WITH PASSWORD 'adzum';`
+`CREATE DATABASE opsis;
+CREATE USER opsis WITH PASSWORD 'opsis';`
 
-`ALTER ROLE adzum SET client_encoding TO 'utf8';
-ALTER ROLE adzum SET default_transaction_isolation TO 'read committed';
-ALTER ROLE adzum SET timezone TO 'UTC';`
+`ALTER ROLE opsis SET client_encoding TO 'utf8';
+ALTER ROLE opsis SET default_transaction_isolation TO 'read committed';
+ALTER ROLE opsis SET timezone TO 'UTC';`
 
-`GRANT ALL PRIVILEGES ON DATABASE adzum TO adzum;`
+`GRANT ALL PRIVILEGES ON DATABASE opsis TO opsis;`
 
 `\q`
 
 # Create directory and go to directory
 
-`mkdir ~/adzum
-cd ~/adzum`
+`mkdir ~/opsis
+cd ~/opsis`
 
 # Create virtual environment and activate
 
-`python3 -m venv venv
-source venv/bin/activate`
+'python3 -m venv venv
+source venv/bin/activate'
 
 # Install dependencies
 
@@ -40,7 +52,6 @@ source venv/bin/activate`
 
 Make sure you have following configuration in database settings of the project
 
-`
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -51,7 +62,6 @@ DATABASES = {
         'PORT': '',
     }
 }
-`
 
 . . .
 
@@ -82,7 +92,7 @@ python manage.py migrate`
 # Configuring gunicorn
 
 
-`gunicorn --bind 0.0.0.0:8000 adzum.wsgi`
+`gunicorn --bind 0.0.0.0:8000 businessportal.wsgi`
 
 # Deactive virtualenv 
 
@@ -95,7 +105,6 @@ python manage.py migrate`
 
 . . .
 
-`
 [Unit]
 Description=gunicorn socket
 
@@ -104,7 +113,6 @@ ListenStream=/run/gunicorn.sock
 
 [Install]
 WantedBy=sockets.target
-`
 
 . . .
 
@@ -114,7 +122,6 @@ WantedBy=sockets.target
 # Add this code to gunicorn.service file.
 . . .
 
-`
 [Unit]
 Description=gunicorn daemon
 Requires=gunicorn.socket
@@ -123,16 +130,15 @@ After=network.target
 [Service]
 User=root
 Group=www-data
-WorkingDirectory=/root/adzum
-ExecStart=/root/adzum/venv/bin/gunicorn \
+WorkingDirectory=/root/opsis
+ExecStart=/root/opsis/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \
-          adzum.wsgi:application
+          businessportal.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
-`
 
 . . .
 
@@ -186,16 +192,15 @@ The index page will be shown as output
 `sudo systemctl daemon-reload
 sudo systemctl restart gunicorn`
 
-`sudo nano /etc/nginx/sites-available/adzum`
+`sudo nano /etc/nginx/sites-available/opsis`
 
 # Add this code to project file.
 
 . . .
 
-`
 server {
     listen 80;
-    server_name 64.227.180.96;
+    server_name 143.110.182.98;
 
     location = /favicon.ico { access_log off; log_not_found off; }
 
@@ -204,11 +209,10 @@ server {
         proxy_pass http://unix:/run/gunicorn.sock;
     }
 }
-`
 
 . . .
 
-`sudo ln -s /etc/nginx/sites-available/adzum /etc/nginx/sites-enabled`
+`sudo ln -s /etc/nginx/sites-available/opsis /etc/nginx/sites-enabled`
 
 `sudo nginx -t`
 `sudo systemctl restart nginx`
