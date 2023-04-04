@@ -12,7 +12,7 @@ Adzum
 
 `7!AdzumG`
 
-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
+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
 
 
 # After logging in to server
