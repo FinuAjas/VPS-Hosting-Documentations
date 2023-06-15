@@ -1,23 +1,3 @@
-`ssh -i "dysgraphia.pem" ubuntu@15.206.124.111`
-
-
-Opsis
-
-`ssh root@143.110.182.98`
-
-`7!OpsisEye`
-
-Adzum
-
-`ssh root@64.227.180.96`
-
-`7!AdzumG`
-
-`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`
-
-`ssh -i "employee_management.pem" ubuntu@3.109.185.82`
-
-
 # After logging in to server
 
 'sudo apt update
