@@ -1,16 +1,21 @@
-`ssh -i "adzum.pem" ubuntu@13.232.247.215`
+`ssh -i "dysgraphia.pem" ubuntu@15.206.124.111`
+
 
 Opsis
 
 `ssh root@143.110.182.98`
 
-7!OpsisEye
+`7!OpsisEye`
 
 Adzum
 
 `ssh root@64.227.180.96`
 
 `7!AdzumG`
+
+`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`
+
+`ssh -i "employee_management.pem" ubuntu@3.109.185.82`
 
 
 # After logging in to server
@@ -21,21 +26,28 @@ sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contri
 # Configure Database Postgresql
 
 `sudo -u postgres psql`
-`CREATE DATABASE opsis;
-CREATE USER opsis WITH PASSWORD 'opsis';`
 
-`ALTER ROLE opsis SET client_encoding TO 'utf8';
-ALTER ROLE opsis SET default_transaction_isolation TO 'read committed';
-ALTER ROLE opsis SET timezone TO 'UTC';`
+`CREATE DATABASE dysgraphia;
+CREATE USER dysgraphia WITH PASSWORD 'dysgraphia';`
 
-`GRANT ALL PRIVILEGES ON DATABASE opsis TO opsis;`
+`ALTER ROLE dysgraphia SET client_encoding TO 'utf8';
+ALTER ROLE dysgraphia SET default_transaction_isolation TO 'read committed';
+ALTER ROLE dysgraphia SET timezone TO 'UTC';`
+
+`GRANT ALL PRIVILEGES ON DATABASE dysgraphia TO dysgraphia;`
 
 `\q`
 
 # Create directory and go to directory
 
-`mkdir ~/opsis
-cd ~/opsis`
+`mkdir ~/dysgraphia
+cd ~/dysgraphia`
+
+# Create git and pull project from git
+
+`git init
+git remote add origin https://github.com/FinuAjas/dysgraphia.git 
+git pull origin main`
 
 # Create virtual environment and activate
 
@@ -63,12 +75,6 @@ DATABASES = {
 
 . . .
 
-# Create git and pull project from git
-
-`git init
-git remote add origin https://github.com/FinuAjas/adzum.git 
-git pull origin main`
-
 # Install dependencies from requiremnets file
 
 `pip install -r requirements.txt`
@@ -80,9 +86,8 @@ python manage.py migrate`
 
 `python manage.py collectstatic`
 
-`sudo ufw allow 8000`
-
-`python manage.py runserver 0.0.0.0:8000`
+`sudo ufw allow 8000
+python manage.py runserver 0.0.0.0:8000`
 
 # open link http://server_domain_or_IP:8000 and make sure site is working properly
 
@@ -90,7 +95,7 @@ python manage.py migrate`
 # Configuring gunicorn
 
 
-`gunicorn --bind 0.0.0.0:8000 businessportal.wsgi`
+`gunicorn --bind 0.0.0.0:8000 dysgraphia_check_project.wsgi`
 
 # Deactive virtualenv 
 
@@ -120,6 +125,28 @@ WantedBy=sockets.target
 # Add this code to gunicorn.service file.
 . . .
 
+# AWS 
+
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/dysgraphia
+ExecStart=/home/ubuntu/dysgraphia/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          dysgraphia_check_project.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+# Digital Ocean 
+
 [Unit]
 Description=gunicorn daemon
 Requires=gunicorn.socket
@@ -133,7 +160,7 @@ ExecStart=/root/opsis/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/gunicorn.sock \
-          businessportal.wsgi:application
+          opsis.wsgi:application
 
 [Install]
 WantedBy=multi-user.target
@@ -141,9 +168,8 @@ WantedBy=multi-user.target
 . . .
 
 `sudo systemctl start gunicorn.socket
-sudo systemctl enable gunicorn.socket`
-
-`sudo systemctl status gunicorn.socket`
+sudo systemctl enable gunicorn.socket
+sudo systemctl status gunicorn.socket`
 
 . . .
 
@@ -159,9 +185,8 @@ sudo systemctl enable gunicorn.socket`
 
 . . .
 
-`sudo journalctl -u gunicorn.socket`
-
-`sudo systemctl status gunicorn`
+`sudo journalctl -u gunicorn.socket
+sudo systemctl status gunicorn`
 
 . . .
 
@@ -179,18 +204,12 @@ The index page will be shown as output
 
 . . .
 
-`sudo systemctl status gunicorn`
 
-# Output
-
-. . .
-
-`sudo journalctl -u gunicorn`
-
-`sudo systemctl daemon-reload
+`sudo journalctl -u gunicorn
+sudo systemctl daemon-reload
 sudo systemctl restart gunicorn`
 
-`sudo nano /etc/nginx/sites-available/opsis`
+`sudo nano /etc/nginx/sites-available/dysgraphia`
 
 # Add this code to project file.
 
@@ -198,7 +217,7 @@ sudo systemctl restart gunicorn`
 
 server {
     listen 80;
-    server_name 143.110.182.98;
+    server_name  15.206.124.111;
 
     location = /favicon.ico { access_log off; log_not_found off; }
 
@@ -210,10 +229,10 @@ server {
 
 . . .
 
-`sudo ln -s /etc/nginx/sites-available/opsis /etc/nginx/sites-enabled`
+`sudo ln -s /etc/nginx/sites-available/dysgraphia /etc/nginx/sites-enabled`
 
-`sudo nginx -t`
-`sudo systemctl restart nginx`
+`sudo nginx -t
+sudo systemctl restart nginx`
 
 `sudo ufw delete allow 8000
 sudo ufw allow 'Nginx Full`
@@ -226,3 +245,7 @@ sudo ufw allow 'Nginx Full`
 sudo systemctl daemon-reload
 sudo systemctl restart gunicorn.socket gunicorn.service
 sudo nginx -t && sudo systemctl restart nginx`
+
+# Delete non empty directory
+
+`sudo rm -r dysgraphia/`
